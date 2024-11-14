@@ -8,11 +8,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter,
 } from "@/components/ui/table";
+import { User } from "@/schemas/user";
 import { useUsers } from "@/services/use-users";
+import { useEffect, useState } from "react";
 
-export const UsersTable = () => {
-  const { users, loading, error } = useUsers();
+export const UsersTable = ({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) => {
+  const { users, usersToDisplay, goOnNextPage, goOnPrevPage, loading, error } = useUsers({query, currentPage});
 
   if (loading) {
     return <div>Loading...</div>;
@@ -34,7 +43,7 @@ export const UsersTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
+        {usersToDisplay.map((user) => (
           <TableRow key={user.id}>
             <TableCell className="font-medium">{user.id}</TableCell>
             <TableCell>{user.name}</TableCell>
@@ -43,6 +52,14 @@ export const UsersTable = () => {
           </TableRow>
         ))}
       </TableBody>
+      <TableFooter>
+      <tr>
+      <td>
+        <button onClick={goOnPrevPage}>Prev</button>
+        <button onClick={goOnNextPage}>Next</button>
+        </td>
+        </tr>
+      </TableFooter>
     </Table>
   );
 };

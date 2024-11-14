@@ -1,10 +1,28 @@
 import { User } from "@/schemas/user";
 import { useState, useEffect } from "react";
 
-const useUsers = () => {
+const useUsers = ({
+  query,
+  currentPage,
+}: {
+  query: string;
+  currentPage: number;
+}) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPageNumber, setCurrentPage] = useState(currentPage);
+  const [usersToDisplay, setDataToDisplay] = useState<User[]>([]);
+  const TOTAL_VALUES_PER_PAGE = 3;
+
+  const goOnPrevPage = () => {
+    if (currentPageNumber === 1) return;
+    setCurrentPage((prev) => prev - 1);
+  };
+  const goOnNextPage = () => {
+    if (currentPageNumber >= users.length / TOTAL_VALUES_PER_PAGE) return;
+    setCurrentPage((prev) => prev + 1);
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -16,7 +34,7 @@ const useUsers = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setUsers(data);
+        setUsers(data.filter((user: User) => user.name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query)));
       } catch {
         setError("Failed to fetch users");
       } finally {
@@ -25,9 +43,15 @@ const useUsers = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [currentPageNumber]);
 
-  return { users, loading, error };
+  useEffect(() => {
+    const start = (currentPageNumber - 1) * TOTAL_VALUES_PER_PAGE;
+    const end = currentPageNumber * TOTAL_VALUES_PER_PAGE;
+    setDataToDisplay(users.slice(start, end));
+  }, [users])
+
+  return { users, usersToDisplay, goOnNextPage, goOnPrevPage, loading, error };
 };
 
 export { useUsers };
