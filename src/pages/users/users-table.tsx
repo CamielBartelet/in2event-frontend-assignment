@@ -12,9 +12,6 @@ import {
 	TableFooter,
 } from "@/components/ui/table";
 import { useUsers } from "@/services/use-users";
-import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
-import { DataTable } from "simple-datatables";
 
 export const UsersTable = ({
 	query,
