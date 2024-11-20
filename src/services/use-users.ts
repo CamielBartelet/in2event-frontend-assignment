@@ -1,33 +1,80 @@
 import { User } from "@/schemas/user";
 import { useState, useEffect } from "react";
 
-const useUsers = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+const useUsers = ({
+	query,
+	currentPage,
+}: {
+	query: string;
+	currentPage: number;
+}) => {
+	const [users, setUsers] = useState<User[]>([]);
+	const [foundUsers, setUsersFound] = useState<string | null>(null);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [error, setError] = useState<string | null>(null);
+	const [currentPageNumber, setCurrentPage] = useState(currentPage);
+	const [totalPageNumber, setTotalPages] = useState<number>(1);
+	const [usersToDisplay, setUsersToDisplay] = useState<User[]>([]);
+	const TOTAL_VALUES_PER_PAGE = 3;
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(
-          "https://jsonplaceholder.typicode.com/users"
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setUsers(data);
-      } catch {
-        setError("Failed to fetch users");
-      } finally {
-        setLoading(false);
-      }
-    };
+	const goOnPrevPage = () => {
+		if (currentPageNumber === 1) return;
+		setCurrentPage((prev) => prev - 1);
+	};
+	const goOnNextPage = () => {
+		if (currentPageNumber >= totalPageNumber) return;
+		setCurrentPage((prev) => prev + 1);
+	};
 
-    fetchUsers();
-  }, []);
+	useEffect(() => {
+		const fetchUsers = async () => {
+			try {
+				const response = await fetch(
+					"https://jsonplaceholder.typicode.com/users"
+				);
+				if (!response.ok) {
+					throw new Error("Network response was not ok");
+				}
+				const data = await response.json();
+				const filteredUsers = data.filter(
+					(user: User) =>
+						user.name.toLowerCase().includes(query.toLowerCase()) ||
+						user.email.toLowerCase().includes(query.toLowerCase())
+				);
+				setUsers(filteredUsers);
+				setTotalPages(Math.ceil(filteredUsers.length / TOTAL_VALUES_PER_PAGE));
+				if (filteredUsers.length === 0) {
+					setUsersFound("No users found matching your search.");
+				} else {
+					setUsersFound("");
+				}
+			} catch {
+				setError("Failed to fetch users");
+			} finally {
+				setLoading(false);
+			}
+		};
 
-  return { users, loading, error };
+		fetchUsers();
+	}, [currentPageNumber]);
+
+	useEffect(() => {
+		const start = (currentPageNumber - 1) * TOTAL_VALUES_PER_PAGE;
+		const end = currentPageNumber * TOTAL_VALUES_PER_PAGE;
+		setUsersToDisplay(users.slice(start, end));
+	}, [users]);
+
+	return {
+		users,
+		usersToDisplay,
+		currentPageNumber,
+		totalPageNumber,
+		goOnNextPage,
+		goOnPrevPage,
+		loading,
+		error,
+		foundUsers,
+	};
 };
 
 export { useUsers };
