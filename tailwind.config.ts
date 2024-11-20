@@ -61,9 +61,6 @@ const config: Config = {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	plugins: [
 		require("tailwindcss-animate"),
-		require("flowbite/plugin")({
-			datatables: true,
-		}),
 		require("tailwindcss/plugin")(({ addVariant }: any) => {
 			addVariant("search-cancel", "&::-webkit-search-cancel-button");
 		}),

@@ -24,7 +24,6 @@ export const UsersTable = ({
 	currentPage: number;
 }) => {
 	const {
-		users,
 		usersToDisplay,
 		currentPageNumber,
 		goOnNextPage,
@@ -33,40 +32,6 @@ export const UsersTable = ({
 		error,
 		foundUsers,
 	} = useUsers({ query, currentPage });
-
-	const pathname = usePathname();
-
-	const tableRef = useRef<HTMLTableElement>(null);
-	const dataTableInstance = useRef<DataTable | null>(null);
-
-	useEffect(() => {
-		if (loading || error) {
-			return;
-		}
-		// Initialize a DataTable if the path is /usersVariant as alternative to old table
-		if (
-			tableRef.current &&
-			!dataTableInstance.current &&
-			pathname === "/usersVariant"
-		) {
-			dataTableInstance.current = new DataTable(tableRef.current, {
-				paging: true,
-				perPage: 3,
-				perPageSelect: [1, 2, 3],
-				sortable: false,
-			});
-		} else {
-			return;
-		}
-
-		// Cleanup on component unmount
-		return () => {
-			if (dataTableInstance.current) {
-				dataTableInstance.current.destroy();
-				dataTableInstance.current = null;
-			}
-		};
-	}, [loading, error]);
 
 	if (loading) {
 		return <div>Loading...</div>;
@@ -82,7 +47,7 @@ export const UsersTable = ({
 
 	return (
 		<>
-			<Table ref={tableRef}>
+			<Table>
 				<TableCaption>A list of users.</TableCaption>
 				<TableHeader>
 					<TableRow>
