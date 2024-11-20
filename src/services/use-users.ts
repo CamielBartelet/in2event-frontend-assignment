@@ -13,6 +13,7 @@ const useUsers = ({
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [currentPageNumber, setCurrentPage] = useState(currentPage);
+	const [totalPageNumber, setTotalPages] = useState<number>(1);
 	const [usersToDisplay, setUsersToDisplay] = useState<User[]>([]);
 	const TOTAL_VALUES_PER_PAGE = 3;
 
@@ -21,7 +22,7 @@ const useUsers = ({
 		setCurrentPage((prev) => prev - 1);
 	};
 	const goOnNextPage = () => {
-		if (currentPageNumber >= users.length / TOTAL_VALUES_PER_PAGE) return;
+		if (currentPageNumber >= totalPageNumber) return;
 		setCurrentPage((prev) => prev + 1);
 	};
 
@@ -41,6 +42,7 @@ const useUsers = ({
 						user.email.toLowerCase().includes(query.toLowerCase())
 				);
 				setUsers(filteredUsers);
+				setTotalPages(Math.ceil(filteredUsers.length / TOTAL_VALUES_PER_PAGE));
 				if (filteredUsers.length === 0) {
 					setUsersFound("No users found matching your search.");
 				} else {
@@ -66,6 +68,7 @@ const useUsers = ({
 		users,
 		usersToDisplay,
 		currentPageNumber,
+		totalPageNumber,
 		goOnNextPage,
 		goOnPrevPage,
 		loading,

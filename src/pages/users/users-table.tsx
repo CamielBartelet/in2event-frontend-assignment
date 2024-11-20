@@ -1,6 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/pagination";
+import {
+	Button,
+	NavigationList,
+	NavigationListItem,
+} from "@/components/ui/pagination";
 import {
 	Table,
 	TableBody,
@@ -23,6 +27,7 @@ export const UsersTable = ({
 	const {
 		usersToDisplay,
 		currentPageNumber,
+		totalPageNumber,
 		goOnNextPage,
 		goOnPrevPage,
 		loading,
@@ -64,20 +69,28 @@ export const UsersTable = ({
 						</TableRow>
 					))}
 				</TableBody>
-				<TableFooter>{currentPageNumber}</TableFooter>
+				<TableFooter />
 			</Table>
-			<Button
-				onClick={goOnPrevPage}
-				className="px-4 py-2 rounded hover:bg-gray-300"
-			>
-				Previous
-			</Button>
-			<Button
-				onClick={goOnNextPage}
-				className="px-4 py-2 rounded hover:bg-gray-300"
-			>
-				Next
-			</Button>
+			<div className="flex items-center justify-center space-x-4 mt-4">
+				<Button
+					onClick={goOnPrevPage}
+					className="px-4 py-2 rounded hover:bg-gray-300"
+				>
+					Previous
+				</Button>
+				<NavigationList className="inline-flex -space-x-px text-sm">
+					<NavigationListItem className="flex items-center justify-center w-full px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+						Page {currentPageNumber} of {totalPageNumber}
+					</NavigationListItem>
+					{/* Add clickable pagelist */}
+				</NavigationList>
+				<Button
+					onClick={goOnNextPage}
+					className="px-4 py-2 rounded hover:bg-gray-300"
+				>
+					Next
+				</Button>
+			</div>
 		</>
 	);
 };

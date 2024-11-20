@@ -15,7 +15,9 @@ export default function UsersPage(props: {
 	return (
 		<div className="container p-4">
 			<h1 className="text-2xl font-bold mb-4">Users List</h1>
-			<UsersSearch searchPlaceholder={query} />
+			<div className="flex justify-end mb-4">
+				<UsersSearch searchPlaceholder={query} />
+			</div>
 			<Suspense key={query + currentPage} fallback={<p>Loading... </p>}>
 				<UsersTable query={query} currentPage={currentPage} />
 			</Suspense>

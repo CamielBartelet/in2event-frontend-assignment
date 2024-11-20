@@ -10,7 +10,7 @@ const SearchBar = React.forwardRef<
 		<label htmlFor="search" className="sr-only">
 			Search
 		</label>
-		<div className="absolute inset-y-0 start-0 flex items-center ps-3">
+		<div className="absolute inset-y-0 start-0 flex items-center ps-2">
 			<svg
 				className="w-4 h-4 text-gray-500 dark:text-gray-400"
 				aria-hidden="true"
@@ -30,7 +30,7 @@ const SearchBar = React.forwardRef<
 		<input
 			id="search"
 			ref={ref}
-			className={cn("w-full text-sm", className)}
+			className={cn("w-2/4 text-sm", className)}
 			{...props}
 		/>
 	</div>
